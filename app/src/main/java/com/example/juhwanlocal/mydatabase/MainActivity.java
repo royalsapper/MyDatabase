@@ -2,6 +2,7 @@ package com.example.juhwanlocal.mydatabase;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -69,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 deleteRecord();
+            }
+        });
+
+        Button button5 = (Button) findViewById(R.id.button5);
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectData();
             }
         });
 
@@ -165,6 +174,34 @@ public class MainActivity extends AppCompatActivity {
             if (database != null) {
                 int rowsAffected = database.delete(tableName, "name = ?", params);
                 println("데이터를 삭제했습니다 : " + rowsAffected);
+            } else {
+                println("데이터베이스를 먼저 오픈하세요.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void selectData() {
+        String tableName = editText2.getText().toString();
+
+        String sql = "select name, age, mobile from " + tableName;
+        try {
+            if (database != null) {
+                Cursor cursor = database.rawQuery(sql, null);
+                println("조회한 레코드 수: " + cursor.getCount());
+
+                for (int i = 0; i < cursor.getCount(); i++) {
+                    cursor.moveToNext();
+
+                    String name = cursor.getString(0);
+                    int age = cursor.getInt(1);
+                    String mobile = cursor.getString(2);
+
+                    println("#" + i + " -> " + name + ", " + age + ", " + mobile);
+                }
+
+
             } else {
                 println("데이터베이스를 먼저 오픈하세요.");
             }
